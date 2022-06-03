@@ -1,7 +1,7 @@
 # 0. **Welcome and Run Template Project** 
 Hello all Berliner Code Pubers! In this workshop, we will be creating a small Tic-Tac-Toe game in the JavaScript framework [Vue.js](https://vuejs.org/). 
 
-![Tic tac toe in Vue.js](./base-done.png "tic tac toe board")
+![Tic tac toe in Vue.js](./images/base-done.png "tic tac toe board")
 
 ---
 ## 0.1 **How to read this Readme**
@@ -32,7 +32,7 @@ If you are using an internal editor on your computer, you can fetch the basic pr
 
 The template consists of three different Vue.js files - `App.vue`, `Board.vue` and `Square.vue`, where each file represents a **Vue component**. A Vue Component is a resuable block, which can contain other components or other html content. A Vue application contains one root Vue component, which in turns contains other **child components**. In our application, `App.vue` is the root component. 
 <a name="component-tree"></a>
-![Vue Component tree](./components.png "A vue component tree example")
+![Vue Component tree](./images/components.png "A vue component tree example")
 
 ---
 # 1. **Setting Up the Board**
@@ -71,7 +71,7 @@ h2 {
 
 Running your app - either locally or checking the preview in Vue.js Playground - should display two texts - the Hello Codepubers heading, and The Board which is the Board component. 
 
-![The starting point of project](./base-start.png "Start state of project")
+![The starting point of project](./images/base-start.png "Start state of project")
 
 ---
 ## 1.1 **Add your first squares**
@@ -423,7 +423,7 @@ Instead of having our own hardcoded (or none) names, enable the entering of user
 ## **Extension C - Three-player-game**
 The task of this assignment is to extend our game to be three-players playing on a 4x4 board, what will look sort of like: 
 
-![Three player tic tac toe](./three-player.png "Three player tic tac toe")
+![Three player tic tac toe](./images/three-player.png "Three player tic tac toe")
 
 ### C.1 **Adjust number of players**
 
