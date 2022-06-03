@@ -180,44 +180,56 @@ However, nothing is happening on the screen - because `updateBoard` are not yet 
 
 Add `@click=updateBoard(index)` to the square component. The `updateBoard` function is now called once we click a single square, together with the index of the clicked square.
 
+---
 # 2. **Alternating players and compute winner**
-Next step is to alternate players! 
-## 2.1 **Alternate players**
-To do this, we need a state keeping track on whos turn it is. Thus, add a new reactive variable in `Board.vue` by 
+Next step is to add multiple players alternating their turns! 
+
+---
+## 2.1 **Alternating players**
+---
+To add two players that artineratively take turns, we need a state keeping track on whos turn it is. Add a new reactive variable in `Board.vue` with
 ```
 // Board.vue
-<script setup>
 
+<script setup>
 /* ... */ 
 
 const isNext = ref('X') 
 
 /* ... */ 
-
-</setup>
+</script>
 ```
-To use this variable, we need to modify our `updateBoard` function to both use our newly created ref value, and to toggle the player each time. 
+Next up is to modify `updateBoard` to both use `isNext` and toggle the player. 
 ```
 // Board.vue
-<script setup>
 
+<script setup>
 /* ... */ 
 
 const updateBoard = (i) => {
-  board.value[i] = isNext.value;
+  boardSquares.value[i] = isNext.value;
   isNext.value = isNext.value === "X" ? "O" : "X";
 };
-</setup>
+
+</script>
 ```
+> What happened here? We are setting the `isNext.value` depending on the outcome of the line `isNext.value`. If it equals `X`, set `isNext.value` to `O`, and set it to `X` otherwise.
+
 Now you should se `X` and `O` alternatively being filled in the squares. 
 
+---
 ## 2.2 **Compute winner**
-But when does the game end? When someone gets three in a row! Add the helper function below to compute the winner in `Board.vue`
+---
+But when does the game end? When someone gets three in a row! Add the computed property below to compute the winner.
 
 ```
-<script setup >
+// Board.vue
+
+<script setup>
 /** ... **/
-const calculateWinner = (squares) => {
+
+const winner = computed(() => {
+  const squares = boardSquares.value;
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -237,29 +249,32 @@ const calculateWinner = (squares) => {
 };
 </script>
 ```
-and in the `updateBoard` function, we need to calculate and check for the winner in every update. We also want to check if the square we are clicking already has a filled value - if so, we do not want to update the squares value or change the user. 
+In `updateBoard`, we need to check if there is a winner in every update. Also, the check should include if the square already has a filled value - if so, we do not want to update the value of the square or change the user. 
 ```
 // Board.vue
-<script setup>
 
+<script setup>
 /* ... */ 
 
 const updateBoard = (i) => {
-  const winner = calculateWinner(board.value);
-  if (winner || board.value[i]) return;
+  if (winner.value || boardSquares.value[i]) return;
 
-  board.value[i] = isNext.value;
+  boardSquares.value[i] = isNext.value;
   isNext.value = isNext.value === "X" ? "O" : "X";
 };
-</setup>
+
+</script>
 ```
-You should now have a game that stops if anyone has won, and it is not possible to click a square that is already filled. 
+You should now have a game that stops if anyone has won, and where it is not possible to click a square that already is filled. 
+
+---
 # 3. **Displaying the winner by lifting state up**
-The final step of the "Base" part is to display the winner. To do this, we want to alter the text displayed in our `App.vue`.
+The final step is to display whose turn it is or, if someone has won, the winner. To do this, alter the text displayed in `App.vue`.
 
-
+---
 ## 3.1 **Pre work - lifing state up**
-To be able to use , we are going to "lift our state up" - i.e. move the logic from `Board.vue` to `App.vue`. Lets start with the `boardSquares` - move them from being a reacting variable in `Board.vue`, to `App.vue`, and send the array as prop down to the Board component. The prop is declared in `Board.vue` with `defineProps`. 
+---
+To be able to use whose turn it is or if someone has won, we are going to "lift our state up" - i.e. move the logic from `Board.vue` to `App.vue`. Lets start with `boardSquares` - move them from being a reactive variable in `Board.vue`, to `App.vue`, and send the `boardSquares.value` as prop down to the Board component. The prop is declared in `Board.vue` with `defineProps`. 
 
 ```
 // Board.vue
@@ -269,7 +284,7 @@ import { ref } from "vue";
 import Square from "./Square.vue";
 
 const props = defineProps({
-  board: {
+  boardSquares: {
     type: Array,
   },
 });
@@ -282,14 +297,14 @@ const props = defineProps({
 <template>
   <h1>HELLO CODEPUBERS!</h1>
   <div class="container">
-    <Board :board="board" />
+    <Board :boardSquares="boardSquares" />
   </div>
 </template>
 <script setup>
 import { ref, computed } from "vue";
 import Board from "./Board.vue";
 
-const board = ref(Array(9).fill(null));
+const boardSquares = ref(Array(9).fill(null));
 
 /* .. */ 
 </script>
@@ -300,18 +315,19 @@ However, this should generate a warning as we are trying to update a prop from t
 
 Next we want to lift all the logic up - `calculateWinner`, `updateBoard`, and `isNext` should be moved to `App.vue`. 
 
-However, this will return a new error - "updateBoard does not exist". Since we are calling `updateBoard` from our template in `Board.vue`, we need to change that as well.
+This will return a new error - *updateBoard does not exist*. Since we are calling `updateBoard` from our template in `Board.vue`, we need to change that as well.
 
-*There are different ways of handling this state. Another option would be to keep the board state on the board, and only emit if players have changed or have won. However, that would create muliple state-keeping, and adding future functionality, it would be most nice to have all game logic in the `App.vue` (or `Game.vue` if other stuff might be added to `App.vue`*
+>There are different ways of implementing this logic. Lifting the state up is only one out of multiple possible solutions.
 
 ## 3.2 **Send events from child to parent using emit**
 
-Instead of calling `updateBoard`, we want to tell our parent (The app component) that an action has taken place. If we only would use `@click` on the Board Component, we have no information about what square was used. Instead, we need another way. 
+Instead of calling `updateBoard`, we want to tell our parent (the app component) that an action has taken place. If we only would use `@click` on the Board component, we have no information about what square was used. Instead, we need another way. 
 
-For communication from child to parent, vue has a concept called `emit` - and you are *emitting events* from the child to the parent, and listens to that events with the `v-on/@` directive at the parent. We call our event `squareClicked`, and we start with defining at the board that this is an event which can be emitted by using `defineEmits`, and changing the `@click`
+For communication from child to parent, Vue has a concept called `emit` - and you are **emitting events** from the child to parent, and listens to that event with the `v-on/@` directive in the parent. We call our event `squareClicked`, and we start with defining in `Board.vue` that this event can be emitted by using `defineEmits`, and changing the `@click`. 
 
 ```
 // Board.vue
+
 <template>
   <Square
     v-for="(value, index) in board"
@@ -322,39 +338,44 @@ For communication from child to parent, vue has a concept called `emit` - and yo
 </template>
 <script setup>
 /* ... */
+
 const emits = defineEmits(["squareClicked"]);
+
 </script>
 ```
 In `@click="emits('squareClicked', index)"`, we are telling our component to emit `squareClicked`, with the payload `index` (so that the parent knows the index of the square which was clicked). 
 
 ## 3.2 **Add winner text with computed property**
-Last step of the game is to print the name of the winner, or print whose turn it is next. We will replace `Hello Codpubers` text in `App.vue`. We will replace it with a so called *computed property*. A computed property in Vue.js is a value which depends on other variables, and is updated when they are updated. We will add the computed property to `App.vue` with the following code: 
+Now we will print the name of the winner, or print whose turn it is next. Replace `Hello Codpubers` with a so called **computed property**. A computed property in Vue.js is a value which depends on other variables, and is updated when they are updated. Add the computed property to `App.vue` with the following code: 
 
 ```
 // App.vue
+
+<script setup>
+/* ... */
+
 const nextTurnText = computed(() => {
   const winner = calculateWinner(board);
-  return winner
-    ? `The amazing tic-tac-toe winner is: ${winner}`
+  return winner.value
+    ? `The amazing tic-tac-toe winner is: ${winner.value}`
     : `Next up is: ${isNext.value}`;
 });
-```
-Here, we first check if anyone has won - if there is a winner, we add a text telling that is the winner. Otherwise, we print the value of `isNext` as that is who is next up. 
 
-To display this in your template, change the h2-tag to display our `nextTurnText`
+</script>
+```
+Here, we first check if anyone has won - if there is a winner, we add a text telling whos is the winner. Otherwise, we print who is next up. 
+
+To display this in your template, change `<h2>` to display our `nextTurnText`
 
 ```
 // App.vue
+<template>
   <h2>{{ nextTurnText }}</h2>
+  /* ... */
+</template>
 ```
 
 Congratulations - you have now created your own tic-tac-toe game in Vue.js! To extend the application, you can now either select one of the extension proposed below, or add other features according to your choice (imagination has no limit :yay-frog:). If you don't know how to implement it, it is just to ask.
-
-* Properties
-* Emits
-* Components
-* Vue Directives
-* Data Bindings
 
 # 4. **Extensions** 
 
