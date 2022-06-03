@@ -1,105 +1,81 @@
-# tic-tac-toe
-
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
-
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
-
-
 # 0. **Welcome and Run Template Project** 
-Hello all Berliner Code Pub-ers! In this workshop, we will be creating a small Tic Tac Toe game in Vue.js. 
+Hello all Berliner Code Pubers! In this workshop, we will be creating a small Tic-Tac-Toe game in the JavaScript framework [Vue.js](https://vuejs.org/). 
 
-<INSERT IMG>
-
-If you are using an internal editor on your computer, you can fetch the basic project from the github repository [here]()TODO INSERT LINK!!!! Otherwise, just continue on here at Vue.js playground. 
-
-The template consists of three different Vue.js files - `App.vue`, `Board.vue` and `Square.vue`, where each file represents a *vue component*. 
-
-<INSERT VUE COMPONENTS PICTURE>
-
-## 0.1 **How to read this tutorial**
-
-`Code`
-```
-// File Name
-Code snippets
-
-/* ... */ (Previous code written)
-```
-*Vue begrepp*
-
-
+![Tic tac toe in Vue.js](./base-done.png "tic tac toe board")
 
 ---
+## 0.1 **How to read this Readme**
+---
+To easily follow this Workshop and Readme, the Readme is structured according to a few conventions. 
 
+- Code and file names are written as `CodeExample`.
+- Larger code snippets are writting in block, where the file name is included as a comment on the top, for example as 
+```
+// File Name
 
-# 1. **Setting up the Board**
-In this first task, we will be setting up the board with the main feature of filling a square with `X` when it is being clicked. 
+Newly added code together with some older code to understand where the new code should be put in
+```
+- If there are previous written code in the same file as the new code, this is implied by
 
-If we jump into the `Board.vue` file, we see three different parts. First we have the template part, where we define the HTML template of the component, and, for example, include other components as here. One `Square` is included on the Board, along with info where board starts and board end.
+```
+/* ... */ (Previous code written)
+```
+- When Vuejs concepts or other important words are mentioned, they are written in bold, as **Vue Concept**
+
+- If there are some deeper explainations to either concepts or why, these are written as the citation shown below. These can be skipped depending on how much in detail you want to go. 
+> Example explaination of a concept
+
+---
+## 0.2 **Intro to the project**
+---
+If you are using an internal editor on your computer, you can fetch the basic project from the github repository [here](https://github.com/LovreB/vue-tic-tac-toe). Otherwise, just continue on here at [Vue.js playground](https://sfc.vuejs.org/). 
+
+The template consists of three different Vue.js files - `App.vue`, `Board.vue` and `Square.vue`, where each file represents a **Vue component**. A Vue Component is a resuable block, which can contain other components or other html content. A Vue application contains one root Vue component, which in turns contains other **child components**. In our application, `App.vue` is the root component. 
+
+![Vue Component tree](./components.png "A vue component tree example")
+
+---
+# 1. **Setting Up the Board**
+The first task is to set up the board with nine squares, and fill a square with and `X` when clicked.  
+
+Inspecting our root compoment `App.vue` file, there are three different parts. First is the template part, where the HTML template of the component is defined. If the compoment includes other components, they are added in a tag here, like `<Board />`. 
 
 ````
 <template>
-  <h3>The Board</h3>
+  <h2>HELLO CODE-PUBERS!</h2>
+  <div class="board-container">
+    <Board />
+  </div>
 </template>
 ````
-A script part - 
+A script part where the logic and data is added - here written in TypeScript. 
 ````
 <script setup>
-    // TODO: Fill in JavaScript parts
+import Board from "./Board.vue"; // Imports the Board component so that it can be used in the template
+
 </script>
 ````
-And lastly, a style part with css. We will not care about the styling in this tutorial
+And lastly, a style part with css. This workshop will not care about the styling - but feel free to modify if you want to. 
 ```
 <style>
-.row {
-  display: block;
-  width: 100%;
+h2 {
+  text-align: center;
+}
+.board-container {
+  margin: auto;
+  max-width: 138px;
+  padding-top: 30px;
 }
 </style>
 ```
 
+Running your app - either locally or checking the preview in Vue.js Playground - should display two texts - the Hello Codepubers heading, and The Board which is the Board component. 
+
+![The starting point of project](./base-start.png "Start state of project")
+
+---
 ## 1.1 **Add your first squares**
+---
 First step is to start fill the board with squares. To Recall the [component tree] - we are now adding 9 Square components as children to the Board component. 
 
 In `Board.vue`, we want to add . We also need to *import* the Square to be able to use it in our Board component, which is done in the script part. 
@@ -363,8 +339,16 @@ To further challenge yourself, you can select one (or multiple!) of the extensio
 - need to return the index of the winning squares
 - Also change X O to use different backgrounds instead
 
-## Extension C - Three-player-game
-* TODO: 
+## **Extension C - Three-player-game**
+The task of this assignment is to extend our game to be three-players playing on a 4x4 board, what will look sort of like: 
+
+![Three player tic tac toe](./three-player.png "Three player tic tac toe")
+
+### C.1 **Adjust players**
+
+
+### C.2 **Adjust board**
+
 - Use 4x4 board
 - Fix algo
 - Update user
