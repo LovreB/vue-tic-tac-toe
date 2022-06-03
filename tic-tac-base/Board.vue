@@ -1,8 +1,7 @@
 <template>
-  <Square />
+  <h3>The board</h3>
 </template>
 <script setup>
-import Square from "./Square.vue";
 </script>
 
 <style>

@@ -31,7 +31,7 @@ Newly added code together with some older code to understand where the new code 
 If you are using an internal editor on your computer, you can fetch the basic project from the github repository [here](https://github.com/LovreB/vue-tic-tac-toe). Otherwise, just continue on here at [Vue.js playground](https://sfc.vuejs.org/). 
 
 The template consists of three different Vue.js files - `App.vue`, `Board.vue` and `Square.vue`, where each file represents a **Vue component**. A Vue Component is a resuable block, which can contain other components or other html content. A Vue application contains one root Vue component, which in turns contains other **child components**. In our application, `App.vue` is the root component. 
-
+<a name="component-tree"></a>
 ![Vue Component tree](./components.png "A vue component tree example")
 
 ---
@@ -76,76 +76,109 @@ Running your app - either locally or checking the preview in Vue.js Playground -
 ---
 ## 1.1 **Add your first squares**
 ---
-First step is to start fill the board with squares. To Recall the [component tree] - we are now adding 9 Square components as children to the Board component. 
+Recall the [component tree](#02-intro-to-the-project) - we will now add nine *Square* components as children to the *Board* component. 
 
-In `Board.vue`, we want to add . We also need to *import* the Square to be able to use it in our Board component, which is done in the script part. 
+In `Board.vue`, the template needs to be updated to include the *Square* component. In order to include the *Square*, it has to be imported in `Board.vue`, which is done in the script part. Update `Board.vue` with the code below.
 ```
 // Board.vue
+
 <template>
   <Square />
 </template>
+
 <script setup>
 import Square from './Square.vue'
 </script>
+
+/* ... */
 ``` 
 You should now be able to see a single square in the preview. 
 
-But a board does not consist of one square, right? Since we want 9 squares we need a representation. In Vue, data models that can change are usually (TODO: LOOK UP STATEMENT). In the script, add 
+But a board does not consist of one square, right? Nine squares are included in a board, and to remember the values of every square (`X`, `O` or empty), a data representation is needed. In the script, add
 ```
-const boardSquares = ref(Array(9).fill())
-``` 
-This creates a *reactive* variable, where the value, i.e. the array, later on can be used using `boardSquares.value`. Read more about reactive values HERE (TODO: FILL IN)
+// Board.vue
 
-For each of these squares, we want to add an actual square. This is done via the vue rendering option (TODO: Check wording) `v-for`. In the template, replace `<Square />` with 
+const boardSquares = ref(Array(9).fill('X'))
+``` 
+This creates a **reactive** variable, where the value, i.e. the array, later on can be used using `boardSquares.value`. 
+
+> Reactive variables enforces the component to update appropirate parts when the inner value, i.e. the value contained in `.value`, is being updated. Read more about reactive variables [here](https://vuejs.org/api/reactivity-core.html#ref)
+
+For each of the values in `boardSquares`, we want to add an actual square in the template so that the squares are visible. This is done via the **Vue directive** `v-for`. In the template, replace `<Square />` with 
 
 ```
-  <Square v-for="(value, index) in boardSquares" :key="index"/>
+// Board.vue
 
+<Square 
+  v-for="(value, index) in boardSquares"
+  :key="index"/>
 ``` 
-This will create one square for every square in `boardSquarares`, resulting with nine squares in the preview. 
+This will create one square for every value in `boardSquares`, resulting with nine squares in the preview. 
 
-## 1.2 **Filling the squares with Props**
+> Vue Directives are special attributes with the `v-` prefix, which should update the rendering when the value of them changes. `v-for` takes an array, and create one vue element for every value in that array. Always when using `v-for`, a unique key also has to be included. More about directives and v-for can be found [here](https://vuejs.org/api/built-in-directives.html#v-for)
 
-In Vue.js, data bindings are an essential concept - data are being passed between components, and the template is re-rendered as soon as data is updated. When we pass data between parent - child, we do this via the components *props*.
+---
+## 1.2 **Filling the squares with props**
+---
+In Vue.js, data bindings are an essential concept - data are being passed between components, and a component is re-rendered as soon as data is updated. When data is passed between parent - children, this is done via the components **props**.
 To your `Square.vue`, add the 
 
 ```
+// Square.vue
+
 <template>
   <span class="square">{{ value }}</span>
 </template>
+
 <script setup>
 defineProps({
   value: String,
 });
+</script>
+
+/* ... */
 ```
-* Define props is used, and saying what type it is. Can then be used directly in the templated
 
-Need to pass the value to component - which we are doing by binding the `square` to the `value` prop, by adding the attribute `:value="value"` in our v-for.
+To define the possible props for a component in Vue, `defineProps` is used. Here, we tell our component that we want to have a prop called `value`, which should be a string. To display the prop in the template, we are using curly braces - `{{ }}` - around the prop. 
 
-You should now see lots of `X` on the board.
+> Whenever a value within `{{ }}` is updated, so is the rendered component.
 
-## 1.2 **Only fill when clicked using Emits**
-To avoid having a pre-filled board, we will now implement to only fill a square with `X` when it is clicked. 
-TODO FILL IN TEXT
-Add the method `updateBoard`
+Next step is to pass the value in the `boardSquares` array to the correct square in `Board.vue`. This is achieved by binding the `square` to the `value` prop, by adding the attribute `:value="value"` in our v-for, resulting in 
+
+```
+// Board.vue
+
+<Square 
+  v-for="(value, index) in boardSquares"
+  :key="index"
+  :value="value"/>
+```
+
+There should now be an `X` in every square.
+
+---
+## 1.3 **Only fill square when clicked**
+---
+To avoid having a pre-filled board, the next task is to only fill a square with `X` when it is clicked. To achieve this, we need a method which sets the correct value of a square, and change the initial state of a square to be empty. Let's add the `updateBoard` function, which takes an index as input and updates the value in that index to `X`. 
 
 ```
 // Board.vue
 <script setup>
 
 /* ... */
+const boardSquares = ref(Array(9).fill(null));
 
-const updateBoard = (i) => {
-  board.value[i] = "X";
+const updateBoard = (index) => {
+  boardSquares.value[index] = "X";
 };
 
 </script>
 ```
-TODO: FIX CODEISH LANGUAGE. 
-This method gets the array encapsulated by the reactive board variable, by calling the value property. n the board - ref  . Due to the reactiveness, all components that are using the board ref will re-render once a value like this is updated. 
+Due to `boardSquares` being a reactive variable, all components that are using the value of `boardSquares` will be updated when `boardSquares` is updated. 
 
-But to call this method when a square is clicked, we need to add an *onClick event listener* to our `Square` components by using vues `v-on`, with shorthand `@`, directive. Add to the Square component
-`@click=updateBoard(i)`. The updateBoard function is now called once we click a single square, and we are sending the index of the square we want to update. 
+However, nothing is happening on the screen - because `updateBoard` are not yet used anywhere. To call `updateBoard` when a square is clicked, we need to add an **onClick event listener** to our *square* components by using the directive `v-on` (shorthand `@`). 
+
+Add `@click=updateBoard(index)` to the square component. The `updateBoard` function is now called once we click a single square, together with the index of the clicked square.
 
 # 2. **Alternating players and compute winner**
 Next step is to alternate players! 
@@ -325,14 +358,41 @@ Congratulations - you have now created your own tic-tac-toe game in Vue.js! To e
 
 # 4. **Extensions** 
 
-To further challenge yourself, you can select one (or multiple!) of the extensions below - they are not dependent on each other. 
+To further challenge yourself, you can select one (or multiple!) of the extensions below - they are not dependent on each other. The hints given will also bli slightly more difficult, so that you need to figure the solutions out yourself using your new Vue.js tools in your toolbox. 
 
+---
 ## Extension A - Replay game and display user names
-* TODO
-- Add button with "New game" 
-- Add field for typing names
-- Display names instead of X
-- Adapt model for player to include both name and value (X, O, V)
+---
+After this extension, the tic-tac-toe game will include a replay button, which when clicked, will prompt you to type in the user symbol and name of the players. The players name will also be visible in the title. 
+
+### A.1 **Adapting player model to support names**
+To support both a name, and the value which is filled in the square (hereafter called *token*), we need to change the player model. In `App.vue`: 
+
+- Create a new reactive variable `players`, with 
+- Update the `isNext` variable to be the index of the current player, instead of the token of the current player.
+- Add a computed property `nextPlayer`, which returns the correct player from the `players` array, based on the `isNext` index.
+
+### A.2 **Display player name in title**
+When the player model has been changed, we should update the title to display both the name and the token of the next or winning player. 
+- Update `nextTurnText`, so that it displays both the next players name and token. 
+- Update the `winner` computed property so that it returns the player, and not only the token of the winning player. (Hint: you can use `Array.find()`, documentation found [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find))
+
+### A.3 **Component to add dynamic user names**
+Instead of having our own hardcoded (or none) names, enable the entering of user selected user names.
+
+- Create a new vue component `SignUp.vue` and include it in the `App.vue` template
+- Create two reactive variables `playerOneName` and `playerTwoName`.
+- Add two inputs (`<input />`), binding to the names variables by using the vue directive `v-model`.
+- Create a new function `emitPlayerNames`. This function should emit playerOneName and PlayerTwoName - if they are not empty! (Hint: don't forget to specify `defineEmits`!).
+- Add a button (`<button>`), and call `emitPlayerNames` on click!
+
+### A.4 **Put it all together**
+
+- Add current code in `App.vue` to a new component, `Game.vue`. 
+- Change the `players` variable to be a prop in `Game.vue`. (Hint: Don't forget to remove `player.value` and use only `props.player`)
+- In `App.vue`, add `players` as a reactive variable and also create a `updatePlayers` function which takes an array `playerNames` as input, and sets the `players.value` to a new array including the names and tokens (Hint: use `X` and `O` as hardcoded tokens). 
+- Add a Game component and a SignUp component to the `App.vue` template. Use the vue directive `v-if="players"` and `v-else` on the Game and SignUp Components, respectively.
+
 
 ## Extension B - Style board depending on state
 - Mark background / numbers on winning row
@@ -344,10 +404,10 @@ The task of this assignment is to extend our game to be three-players playing on
 
 ![Three player tic tac toe](./three-player.png "Three player tic tac toe")
 
-### C.1 **Adjust players**
+### C.1 **Adjust number of players**
 
 
-### C.2 **Adjust board**
+### C.2 **Adjust size of board**
 
 - Use 4x4 board
 - Fix algo
