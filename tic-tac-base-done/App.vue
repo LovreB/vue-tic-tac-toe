@@ -1,32 +1,25 @@
 <template>
   <h2>{{ nextTurnText }}</h2>
   <div class="board-container">
-    <Board :board="board" @square-clicked="updateBoard" />
+    <Board :boardSquares="boardSquares" @square-clicked="updateBoard" />
   </div>
 </template>
 <script setup>
-import { ref, computed } from "vue";
 import Board from "./Board.vue";
+import { ref, computed } from "vue";
 
-const isNext = ref("X");
-const board = ref(Array(9).fill(null));
+const boardSquares = ref(Array(9).fill(null));
 
-const updateBoard = (i) => {
-  const winner = calculateWinner(board.value);
-  if (winner || board.value[i]) return;
+const updateBoard = (index) => {
+  if (winner.value || boardSquares.value[index]) return;
 
-  board.value[i] = isNext.value;
+  boardSquares.value[index] = isNext.value;
   isNext.value = isNext.value === "X" ? "O" : "X";
 };
+const isNext = ref("X");
 
-const nextTurnText = computed(() => {
-  const winner = calculateWinner(board);
-  return winner
-    ? `The amazing tic-tac-toe winner is: ${winner}`
-    : `Next up is: ${isNext.value}`;
-});
-
-const calculateWinner = (squares) => {
+const winner = computed(() => {
+  const squares = boardSquares.value;
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -43,7 +36,13 @@ const calculateWinner = (squares) => {
       return squares[a];
   }
   return null;
-};
+});
+
+const nextTurnText = computed(() => {
+  return winner.value
+    ? `The amazing tic-tac-toe winner is: ${winner.value}`
+    : `Next up is: ${isNext.value}`;
+});
 </script>
 <style>
 h2 {

@@ -5,8 +5,7 @@
   </div>
 </template>
 <script setup>
-import Board from "./Board.vue";
-
+import Board from "./Board.vue"; // Imports the Board component so that it can be used in the template
 </script>
 <style>
 h2 {

@@ -1,20 +1,20 @@
 <template>
   <Square
-    v-for="(value, i) in board"
-    :key="i"
-    :value="board[i]"
-    @click="emits('squareClicked', i)"
+    v-for="(value, index) in boardSquares"
+    :key="index"
+    :value="value"
+    @click="emits('squareClicked', index)"
   />
 </template>
 <script setup>
-import { ref } from "vue";
 import Square from "./Square.vue";
-
+import { ref, computed, toRefs } from "vue";
 const props = defineProps({
-  board: {
+  boardSquares: {
     type: Array,
   },
 });
+const { boardSquares } = toRefs(props);
 const emits = defineEmits(["squareClicked"]);
 </script>
 
