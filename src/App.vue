@@ -1,23 +1,19 @@
 <template>
-  <Game  
-    v-if="players"
-   :players="players"/>
-  <SignUp
-   v-else
-   @player-names-updated="updatePlayers"/>
+  <h2>HELLO CODEPUBERS!</h2>
+  <div class="board-container">
+    <Board />
+  </div>
 </template>
 <script setup>
-import { ref, computed } from "vue";
-import Game from "./Game.vue";
-import SignUp from "./SignUp.vue";
-
-const players = ref();
-
-const updatePlayers = (playerNames) => {
-  const newPlayers = [{name: playerNames[0], token: 'X'},{ name: playerNames[1], token: 'O'}]
-  players.value = newPlayers;
-}
+import Board from "./Board.vue"; // Imports the Board component so that it can be used in the template
 </script>
 <style>
-
+h2 {
+  text-align: center;
+}
+.board-container {
+  margin: auto;
+  max-width: 138px;
+  padding-top: 30px;
+}
 </style>

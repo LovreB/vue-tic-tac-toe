@@ -1,10 +1,8 @@
 <template>
-  <span class="square">{{ value }}</span>
+  <span class="square"></span>
 </template>
 <script setup>
-defineProps({
-  value: String,
-});
+
 </script>
 <style>
 .square {
