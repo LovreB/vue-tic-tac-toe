@@ -17,7 +17,7 @@ const playerOneName = ref("");
 const playerTwoName = ref("");
 
 const emitPlayerNames = () => {
-  if (playerOneName && playerTwoName)
+  if (playerOneName.value && playerTwoName.value)
     emits("player-names-updated", [playerOneName.value, playerTwoName.value]);
 };
 </script>

@@ -36,7 +36,7 @@ const nextTurnText = computed(() => {
     : `Next up is: ${isNext.value}`;
 });
 
-const winner =  computed(() => {
+const winner = computed(() => {
   const squares = boardSquares.value;
   const lines = [
     [0, 1, 2],

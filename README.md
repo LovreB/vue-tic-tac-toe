@@ -274,7 +274,7 @@ Now you should se `X` and `O` alternatively being filled in the squares.
 
 ---
 
-But when does the game end? When someone gets three in a row! Add the computed property below to compute the winner.
+But when does the game end? When someone gets three in a row! To compute the winner, we will use a so called **computed property**. A computed property in Vue.js is a value which depends on other variables, and is updated when they are updated (in this case, when `boardSquares` is updated). Add the computed property to `Board.vue` with the following code:
 
 ```
 // Board.vue
@@ -426,7 +426,7 @@ But clicking on a square, nothing happens! Can you guess why? We also need to li
 
 ## 3.2 **Add winner text with computed property**
 
-Now we will print the name of the winner, or print whose turn it is next. Replace `Hello Codpubers` with a so called **computed property**. A computed property in Vue.js is a value which depends on other variables, and is updated when they are updated. Add the computed property to `App.vue` with the following code:
+Now we will print the name of the winner, or print whose turn it is next. Replace `Hello Codpubers` with a computed property, that depends on `winner`. If `winner` has a value, display the winner, otherwise display the one that is next up. Add the computed property to `App.vue` with the following code:
 
 ```
 // App.vue
@@ -519,14 +519,15 @@ The task of this assignment is to extend our game to be three-players playing on
 
 ### C.1 **Adjust number of players**
 
+First step is to adjust the number of player, which we now want to be three players instead of just two.
+
+- Instead of updating the player through `isNext.value = isNext.value === "X" ? "O" : "X";`, create a new function `switchPlayer` and call that function.
+- In the function, use the [if-elseif-else](https://www.w3schools.com/js/js_if_else.asp) pattern to set the player name to `X`, `O` and `Y`, sequentially.
+
 ### C.2 **Adjust size of board**
 
-- Use 4x4 board
-- Fix algo
-- Update user
+Time to update the size of the board!
 
-## Extension D - Explore Life Cycle Hooks and Router
-
-- Add an external "user settings" page on another site
-- Select X O symbols
-- use state for this and router link navbar.
+- Update the `boardSquares` to be an array of 16 squares instead of 9.
+- Update the `winner` computed property with a new winning algorithm, which return a winner if one has three in a row in this larger, 4x4 board. Hint: think about that the indexes also for the previous winning combinations have changed
+- Adjust sliiightly in the style tag, in `Board.vue`, so that `max-width` is larger. Hint: try to find `max-width` in `.board-container`.
