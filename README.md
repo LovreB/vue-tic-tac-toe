@@ -281,7 +281,7 @@ But when does the game end? When someone gets three in a row! To compute the win
 
 <script setup>
 /** ... **/
-import {ref, computed} from '.vue'
+import {ref, computed} from 'vue'
 
 /* ... */
 const winner = computed(() => {
