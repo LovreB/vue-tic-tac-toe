@@ -220,7 +220,7 @@ Due to `boardSquares` being a reactive variable, all components that are using t
 
 However, nothing is happening on the screen - because `updateBoard` are not yet used anywhere. To call `updateBoard` when a square is clicked, we need to add an **onClick event listener** to our _square_ components by using the directive `v-on` (shorthand `@`).
 
-Add `@click=updateBoard(index)` to the square component. The `updateBoard` function is now called once we click a single square, together with the index of the clicked square.
+Add `@click="updateBoard(index)"` to the square component. The `updateBoard` function is now called once we click a single square, together with the index of the clicked square.
 
 ---
 
